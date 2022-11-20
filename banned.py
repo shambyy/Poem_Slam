@@ -1,0 +1,1 @@
+banned_words = ["freedom", "independence", "joy", "sadness", "pain"]

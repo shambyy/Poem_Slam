@@ -1,0 +1,45 @@
+from thesaurusrex import *
+
+coffee = SingleResult("coffee")
+
+print("--------------------")
+print("Query: coffee")
+print("--------------------")
+print("Categories")
+print(coffee.categories)
+print()
+print("Modifiers")
+print(coffee.modifiers)
+print()
+print("Category heads")
+print(coffee.category_heads)
+
+purple = SingleResult("purple")
+
+print("--------------------")
+print("Query: purple")
+print("--------------------")
+print("Categories")
+print(purple.categories)
+print()
+print("Modifiers")
+print(purple.modifiers)
+print()
+print("Category heads")
+print(purple.category_heads)
+
+
+coffee_tobacco = PairResult("coffee","tobacco")
+
+print("--------------------")
+print("Query: coffee & tobacco")
+print("--------------------")
+print("Categories")
+print(coffee_tobacco.categories)
+print()
+print("Cloud 1")
+print(coffee_tobacco.cloud1)
+print()
+print("Cloud 2")
+print(coffee_tobacco.cloud2)
+print()
