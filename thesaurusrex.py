@@ -1,5 +1,6 @@
 from lxml import etree
 import requests
+from line_gen import *
 
 """Imported from Evan MiltenBurg: ThesaurusRex API"""
 
@@ -38,18 +39,5 @@ class SingleResult(Result):
         self.modifiers = self.dict_from_xml("Modifier", "Modifiers")
         self.category_heads = self.dict_from_xml("CategoryHead", "CategoryHeads")
 
-# maybe make a new function for PairResult
-
-class PairResult(Result):
-    "Result object for a pair of words."
+def trex_on_combo(combo_list):
     
-    base_url = "http://ngrams.ucd.ie/therex3/common-nouns/share.action?word1={}&word2={}&xml=true"
-    
-    def __init__(self, word1, word2):
-        query = PairResult.base_url.format(word1, word2)
-        response = requests.get(query)
-        self.root = etree.fromstring(response.content)
-        self.members = self.dict_from_xml("Member", "Members")
-        c1, c2 = self.root.findall("cloud")
-        self.cloud1 = self.dict_from_elements(c1.iterfind("entry"))
-        self.cloud2 = self.dict_from_elements(c2.iterfind("entry"))

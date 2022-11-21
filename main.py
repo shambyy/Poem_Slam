@@ -1,6 +1,15 @@
 from thesaurusrex import *
+from line_gen import *
 
-coffee = SingleResult("coffee")
+idk = determine_emotions(noun_sent)
+tester = trex_on_combo(idk)
+
+def trex_on_emotional_word(emotions_list):
+    for word in emotional_word:
+        print(word.modifiers)
+
+print(tester())
+"""coffee = SingleResult("coffee")
 
 print("--------------------")
 print("Query: coffee")
@@ -9,6 +18,7 @@ print("Categories")
 print(coffee.categories)
 print()
 print("Modifiers")
+# modifiers are the cool ones
 print(coffee.modifiers)
 print()
 print("Category heads")
@@ -28,18 +38,4 @@ print()
 print("Category heads")
 print(purple.category_heads)
 
-
-coffee_tobacco = PairResult("coffee","tobacco")
-
-print("--------------------")
-print("Query: coffee & tobacco")
-print("--------------------")
-print("Categories")
-print(coffee_tobacco.categories)
-print()
-print("Cloud 1")
-print(coffee_tobacco.cloud1)
-print()
-print("Cloud 2")
-print(coffee_tobacco.cloud2)
-print()
+#two at once not working"""
