@@ -4,6 +4,7 @@ from nltk.corpus import pros_cons as pc
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nrclex import NRCLex
+from words import *
 
 """sentences = br.sents(categories='reviews') + br.sents(categories='romance') + \
     br.sents(categories='humor') + br.sents(categories='fiction') + \
@@ -15,8 +16,13 @@ Brown categories
     'government', 'hobbies', 'humor', 'learned', 'lore', \
     'mystery', 'news', 'religion', 'reviews', 'romance', 'science_fiction']
 """
-
-sentences = pc.sents(categories='Pros') + br.sents(categories='romance')
+# same genres as book
+sentences = br.sents(categories='romance') + \
+    br.sents(categories='government') + \
+    br.sents(categories='fiction') + br.sents(categories='adventure') + \
+    br.sents(categories='science_fiction') + br.sents(categories='lore') 
+    #br.sents(categories='religion') + br.sents(categories='news')
+#sentences = pc.sents(categories='Pros')
 
 #lookup table repping n gram (we will 2 in this 2-gram dict)
 #every word in corpus is a key
@@ -67,12 +73,6 @@ def pull_nouns_and_adjs(output_line):
     
     return nouns_adjs
 
-n_gram_sent = generate_sentence()
-print("n_gram_sent: ") 
-print(n_gram_sent)
-
-pulled_nouns_and_adjs = pull_nouns_and_adjs(n_gram_sent)
-print(pulled_nouns_and_adjs)
 
 #should run nouns and adjectives into trex 
 colors = ['pink', 'red', 'green']
@@ -105,14 +105,86 @@ def convert_to_dict(to_be_converted):
         cute_dict[words[i][0]] = words[i][2]
         i += 1
     
+    #only show ones with values/associated emotions
     cute_dict = {key:val for key, val in cute_dict.items() if val != empty_val}
-    return cute_dict
     
+    return cute_dict
+
+
+def list_felt_emotions(cute_dict):
+    emotions_to_check = list(cute_dict.values())
+
+    newspeak_emotions = []
+
+
+    for item in emotions_to_check:
+
+        newspeak_emotions.append([item])
+
+    return newspeak_emotions
+
+def iterate_emotion_tups(newspeak_emotions):
+    listed_tups = []
+    
+    for word_list in newspeak_emotions:
+        
+        for tuple_list in word_list:
+            
+            for tup in tuple_list:
+                
+                for item in tup:
+                    
+                    listed_tups.append(item)
+    
+    clean = []
+    
+    for item in listed_tups:
+        
+        if type(item) is not float:
+            clean.append(item)
+            
+    cleaned_list = list(set(clean))
+    return cleaned_list
+
+#n_gram_sent = generate_sentence()
+n_gram_sent = "blue and green love"
+print("n_gram_sent: ") 
+print(n_gram_sent)
+
+pulled_nouns_and_adjs = pull_nouns_and_adjs(n_gram_sent)
+print(pulled_nouns_and_adjs)
 
 emotional_words = determine_emotions(pulled_nouns_and_adjs)
 print("dictionary******")
 cute_emotional_dict = convert_to_dict(emotional_words)
 print(cute_emotional_dict)
+
+print("is this it???????")
+please = (list_felt_emotions(cute_emotional_dict))
+print("please*********************")
+print(please)
+print("tough*******")
+
+tough = list(cute_emotional_dict.values())
+print(list(cute_emotional_dict.values()))
+print("hello cutie*********")
+print(iterate_emotion_tups(please))
+
+
+"""print("tough: ")
+print(tough[0])
+print("tough[0][0]")
+print(tough[0][0])
+# try
+# except IndexError
+print('negative' in (tough[0][0]))
+print('positive' in (tough[0][0]))
+print('negative' in (tough[0]))
+print('positive' in (tough[0]))"""
+
+
+
+
 
 
 
