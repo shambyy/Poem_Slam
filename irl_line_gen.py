@@ -1,31 +1,16 @@
 import random
 from nltk.corpus import brown as br
-from nltk.corpus import pros_cons as pc
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nrclex import NRCLex
-from words import *
+import os
+from book_line_gen import *
 
-"""sentences = br.sents(categories='reviews') + br.sents(categories='romance') + \
-    br.sents(categories='humor') + br.sents(categories='fiction') + \
-    br.sents(categories='adventure') + br.sents(categories='science_fiction')"""
-
-"""
-Brown categories
-['adventure', 'belles_lettres', 'editorial', 'fiction', \
-    'government', 'hobbies', 'humor', 'learned', 'lore', \
-    'mystery', 'news', 'religion', 'reviews', 'romance', 'science_fiction']
-"""
 # same genres as book
 sentences = br.sents(categories='romance') + \
     br.sents(categories='government') + \
     br.sents(categories='fiction') + br.sents(categories='adventure') + \
     br.sents(categories='science_fiction') + br.sents(categories='lore') 
-    #br.sents(categories='religion') + br.sents(categories='news')
-#sentences = pc.sents(categories='Pros')
-
-#lookup table repping n gram (we will 2 in this 2-gram dict)
-#every word in corpus is a key
 
 n_grams = {}
 
@@ -46,6 +31,7 @@ for sentence in sentences:
             #append in unseen
             n_grams[words[i]].append(words[i+1])
 
+
 def generate_sentence(nb = 6): # should this be random length
     """ 
     args: nb, number of words that will be generated
@@ -61,11 +47,13 @@ def generate_sentence(nb = 6): # should this be random length
         words.append(next_word)
 
     output_line = " ".join(words)
+    output_line = output_line.lower()
     
-    return output_line.lower()
+    return output_line
+
 
 def pull_nouns_and_adjs(output_line):
-    """takes out nouns from our sentence"""
+    """takes out nouns and adjectives from our sentence"""
     sentence = output_line
     
     nouns_adjs = [token for token, pos in pos_tag(word_tokenize(sentence)) \
@@ -74,8 +62,15 @@ def pull_nouns_and_adjs(output_line):
     return nouns_adjs
 
 
-#should run nouns and adjectives into trex 
-colors = ['pink', 'red', 'green']
+def sentence_frame(output_line):
+    """takes out frame from our sentence"""
+    sentence = output_line
+    
+    frame = [token for token, pos in pos_tag(word_tokenize(sentence)) \
+        if not ((pos.startswith('N')) or (pos.startswith('J')))]
+    
+    return frame
+
 
 def determine_emotions(nouns_adjs):
     # looks at main emotions associated with adjectives
@@ -123,7 +118,10 @@ def list_felt_emotions(cute_dict):
 
     return newspeak_emotions
 
+
 def iterate_emotion_tups(newspeak_emotions):
+    """Return tagged emotions from first line"""
+
     listed_tups = []
     
     for word_list in newspeak_emotions:
@@ -144,10 +142,17 @@ def iterate_emotion_tups(newspeak_emotions):
             clean.append(item)
             
     cleaned_list = list(set(clean))
+    
     return cleaned_list
 
-#n_gram_sent = generate_sentence()
-n_gram_sent = "blue and green love"
+
+# commence onto phase two 
+
+
+
+
+n_gram_sent = generate_sentence()
+#n_gram_sent = "blue and green this our love"
 print("n_gram_sent: ") 
 print(n_gram_sent)
 
@@ -159,37 +164,87 @@ print("dictionary******")
 cute_emotional_dict = convert_to_dict(emotional_words)
 print(cute_emotional_dict)
 
-print("is this it???????")
-please = (list_felt_emotions(cute_emotional_dict))
-print("please*********************")
-print(please)
-print("tough*******")
 
-tough = list(cute_emotional_dict.values())
-print(list(cute_emotional_dict.values()))
-print("hello cutie*********")
-print(iterate_emotion_tups(please))
+list_list_tups_emotions = (list_felt_emotions(cute_emotional_dict))
+print("tagged emotions*********")
+tagged_emotions = iterate_emotion_tups(list_list_tups_emotions)
+print(tagged_emotions)
 
 
-"""print("tough: ")
-print(tough[0])
-print("tough[0][0]")
-print(tough[0][0])
-# try
-# except IndexError
-print('negative' in (tough[0][0]))
-print('positive' in (tough[0][0]))
-print('negative' in (tough[0]))
-print('positive' in (tough[0]))"""
+def link_to_newspeak(cleaned_list):
+
+    fear = ['labour camp','thoughtcrime', 'unperson', 'vaporized']
+    anger =['hate week', 'two minute hate']
+    anticip = ['unperson']
+    trust = ['Big Brother', 'blackwhite', 'doublethink', 'Newspeak', \
+        'ThinkPol']
+    surprise = ['Ingsoc', 'Golden Country']
+    positive = ['artsem','crimestop', 'doubleplus']
+    joy = ['goodthinkful','bellyfeel', 'goodthinker', 'joycamp']
+    negative = ['doubleplusungood', 'crimethink', 'ownlife']
+    sadness =['unperson']
+    disgust = ['crimethink', 'facecrime', 'Oldspeak', 'oldthink']
+
+    newspeak_options = []
+    
+    for i in cleaned_list:
+        if 'fear' == i:
+            newspeak_options.append(fear)
+        if 'anger' == i:
+            newspeak_options.append(anger)
+        if 'anticip' == i:
+            newspeak_options.append(anticip)
+        if 'trust' == i:
+            newspeak_options.append(trust)
+        if 'surprise' == i:
+            newspeak_options.append(surprise)
+        if 'positive' == i:
+            newspeak_options.append(positive)
+        if 'joy' == i:
+            newspeak_options.append(joy)
+        if 'negative' == i:
+            newspeak_options.append(negative)
+        if 'sadness' == i:
+            newspeak_options.append(sadness)
+        if 'disgust' == i:
+            newspeak_options.append(disgust)
+
+    newspeak_options_list = []
+    
+    for emotion in newspeak_options:
+        
+        for vocab in emotion:
+            newspeak_options_list.append(vocab)
+    
+    return newspeak_options_list
 
 
+def newspeak_integrated_line(frame, words_to_add):
+    """generate line with newspeak words"""
+    new_speak_selection = random.choice(words_to_add)
+    frame.append(new_speak_selection)
 
+    frame = " ".join(frame)
 
+    return frame
 
+n_gram_sent2 = generate_sentence()
+book_line = sentence_frame(n_gram_sent2)
+noun_adj_book_line = pull_nouns_and_adjs(n_gram_sent2)
+print("second generated line**********")
+print(n_gram_sent2)
+print(book_line)
+print(noun_adj_book_line)
+print("emotions list:")
+test = link_to_newspeak(tagged_emotions)
+print(test)
+print(random.choice(test))
+print("plese im so tierd")
+godly = newspeak_integrated_line(noun_adj_book_line, test)
+print(godly)
 
-
-# if you can make this into a dict, then can put keys into trex - maybe split left of :
-    # once you have list of values from trex
-    # pull out keys that actually have values
-    # use word to create newspeak buncha if statements
-    # rerun can just involve user selecting the category
+print("LET'S SEEEEEEEEEEE")
+print(n_gram_sent)
+print(godly)
+os.system("say " + n_gram_sent)
+os.system("say " + godly)
