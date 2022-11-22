@@ -1,4 +1,4 @@
-from line_gen import *
+from irl_line_gen import *
 
 class Words:
 

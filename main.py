@@ -1,5 +1,5 @@
 from thesaurusrex import *
-from line_gen import *
+from irl_line_gen import *
 
 idk = determine_emotions(noun_sent)
 tester = trex_on_combo(idk)
