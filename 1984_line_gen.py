@@ -17,4 +17,5 @@ class Words:
         self.sadness =['unperson']
         self.disgust = ['crimethink', 'facecrime', 'Oldspeak', 'oldthink']
 
-    def link_to_newspeak()
+    def link_to_newspeak():
+        
