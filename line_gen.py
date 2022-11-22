@@ -1,34 +1,22 @@
-
 import random
 from nltk.corpus import brown as br
 from nltk.corpus import pros_cons as pc
-from nltk.corpus import twitter_samples
-from nltk.corpus import stopwords
-from nltk.corpus import gutenberg as gt
 from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nrclex import NRCLex
 
-
-"""Off of nltk tutorials"""
-
-#sentences = twitter_samples.sents()
-#sentences = gt.sents()
 """sentences = br.sents(categories='reviews') + br.sents(categories='romance') + \
     br.sents(categories='humor') + br.sents(categories='fiction') + \
     br.sents(categories='adventure') + br.sents(categories='science_fiction')"""
-sentences = br.sents(categories='romance')
-#sentences = pc.sents(categories='Pros') 
-#sentences = "i have all these trolls in my box. this is sad. how?" can't
-#how many sentences in this set
-#print(len(sentences))
 
-#printing a few words
-#print(gt.words())
+"""
+Brown categories
+['adventure', 'belles_lettres', 'editorial', 'fiction', \
+    'government', 'hobbies', 'humor', 'learned', 'lore', \
+    'mystery', 'news', 'religion', 'reviews', 'romance', 'science_fiction']
+"""
 
-#this does the same as the last thing
-#print first sent
-#print(sentences[0])
+sentences = pc.sents(categories='Pros') + br.sents(categories='romance')
 
 #lookup table repping n gram (we will 2 in this 2-gram dict)
 #every word in corpus is a key
@@ -51,99 +39,84 @@ for sentence in sentences:
             #append in unseen
             n_grams[words[i]].append(words[i+1])
 
-def generate_sentence(nb = 15): # should this be random length
+def generate_sentence(nb = 6): # should this be random length
+    """ 
+    args: nb, number of words that will be generated
+    return: output_line, list of the n-gram generated words
+    """
     words = []
+
     next_word = random.choice(list(n_grams.keys()))
     words.append(next_word)
+    
     while len(words) < nb:
-        # next two lines are the og
         next_word = random.choice(n_grams[next_word]) #now from list
         words.append(next_word)
 
     output_line = " ".join(words)
+    
     return output_line
-    """first_half = words[:7]
-    second_half = words[7:]
-    print(first_half, second_half, sep=os.linesep)"""
 
-def pull_noun(output_line):
+def pull_nouns_and_adjs(output_line):
     """takes out nouns from our sentence"""
     sentence = output_line
+    
     nouns_adjs = [token for token, pos in pos_tag(word_tokenize(sentence)) \
         if ((pos.startswith('N')) or (pos.startswith('J')))]
+    
     return nouns_adjs
 
-def pull_adj(output_line):
-    """takes out adjectives from our sentence"""
-    sentence = output_line
-    # maybe don't need sentence variable
-    adjs = [token for token, pos in pos_tag(word_tokenize(sentence)) if pos.startswith('J')]
-    return adjs
+print("sentence here")
+n_gram_sent = generate_sentence()
+print("n_gram_sent:" + n_gram_sent)
 
-
-"""
-Brown categories
-['adventure', 'belles_lettres', 'editorial', 'fiction', \
-    'government', 'hobbies', 'humor', 'learned', 'lore', \
-    'mystery', 'news', 'religion', 'reviews', 'romance', 'science_fiction']
-"""
-print("sent here")
-store_1 = generate_sentence()
-print("store_1:" + store_1)
-
-noun_sent = pull_noun(store_1)
-print(noun_sent)
-
-adj_sent = pull_adj(store_1)
-print(adj_sent)
-
-# :)
-#print(generate_sentence())
-
+pulled_nouns_and_adjs = pull_nouns_and_adjs(n_gram_sent)
+print(pulled_nouns_and_adjs)
 
 #should run nouns and adjectives into trex 
 colors = ['pink', 'red', 'green']
 def determine_emotions(nouns_adjs):
     # looks at main emotions associated with adjectives
     
-    emotions_list = []
+    to_be_converted = []
     for i in range(len(nouns_adjs)):
         # make into dict
         emotion = NRCLex(nouns_adjs[i])
         emotion_dict = nouns_adjs[i], ': ', emotion.top_emotions
-        emotions_list.append(emotion_dict)
+        to_be_converted.append(emotion_dict)
 
-    return emotions_list 
-    # if you can make this into a dict, then can put keys into trex - maybe split left of :
-    # once you have list of values from trex
-    # run determine_emotions 
-    # pull out keys that actually have values
-    # use word to create newspeak buncha if statements
-    # rerun can just involve user selecting the category
+    return to_be_converted 
 
-
-    #it's only returning the first one you doofus- bc u switched to return
-
-
-#list_adjs = adjs + nouns
-#try next
-
+def convert_to_dict(to_be_converted):
+    cute_dict = {}
+    words = to_be_converted
+    i = 0
+    
+    while (i < len(words)):
+        cute_dict[words[i][0]] = words[i][2]
+        i += 1
+    return cute_dict
+    
 
 
 def cleanup_emotions(emotion_dict):
     pass
 
-#print(determine_emotions(adj_sent, noun_sent))
-emotional_word = determine_emotions(noun_sent)
-print(emotional_word)
+#print(determine_emotions(adj_sent, pulled_nouns_r
+#))
+emotional_words = determine_emotions(pulled_nouns_and_adjs)
+print(emotional_words)
+print("indexing attempts")
+print(emotional_words[0][2]) # this gives us list
+print(emotional_words[0][0]) # gives us word
+print(emotional_words[1][0])
+print(len(emotional_words))
+print("dictionary******")
+print(convert_to_dict(emotional_words))
 
-
-
-
-
-#print(br.categories())
-#print(twitter_samples.categories()) it doesnt have cats
-#print(pc.categories())
-#print(br.tagged_words(categories=['romance']))
-#print(br.words(categories=['romance'])) # is mass spitting out words from romance category
-#print(pc.sentences(categories='Cons')) #doesn't work
+# if you can make this into a dict, then can put keys into trex - maybe split left of :
+    # once you have list of values from trex
+    # run determine_emotions 
+    # pull out keys that actually have values
+    # use word to create newspeak buncha if statements
+    # rerun can just involve user selecting the category
