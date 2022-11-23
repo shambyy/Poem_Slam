@@ -190,29 +190,24 @@ def iterate_emotion_tups(newspeak_emotions):
     return cleaned_list
 
 
-# commence phase two 
+# commence poem building
+
 n_gram_sent = generate_sentence()
-#n_gram_sent = "blue and green this our love"
-print("n_gram_sent: ") 
-print(n_gram_sent)
-
 pulled_nouns_and_adjs = pull_nouns_and_adjs(n_gram_sent)
-print(pulled_nouns_and_adjs)
-
 emotional_words = determine_emotions(pulled_nouns_and_adjs)
-print("dictionary******")
 cute_emotional_dict = convert_to_dict(emotional_words)
-print(cute_emotional_dict)
-
-
 list_list_tups_emotions = (list_felt_emotions(cute_emotional_dict))
-print("tagged emotions*********")
 tagged_emotions = iterate_emotion_tups(list_list_tups_emotions)
-print(tagged_emotions)
 
 
 def link_to_newspeak(cleaned_list):
+    """
+    Shows associated NS words
+    arg: list of emotions expressed
+    return: new list of available NS vocab
+    """
 
+    # basic words and their vocab words
     fear = ['labour camp','thoughtcrime', 'unperson', 'vaporized']
     anger =['hate week', 'two minute hate']
     anticip = ['unperson']
@@ -228,24 +223,34 @@ def link_to_newspeak(cleaned_list):
     newspeak_options = []
     
     for i in cleaned_list:
+        
         if 'fear' == i:
             newspeak_options.append(fear)
+        
         if 'anger' == i:
             newspeak_options.append(anger)
+        
         if 'anticip' == i:
             newspeak_options.append(anticip)
+        
         if 'trust' == i:
             newspeak_options.append(trust)
+        
         if 'surprise' == i:
             newspeak_options.append(surprise)
+        
         if 'positive' == i:
             newspeak_options.append(positive)
+        
         if 'joy' == i:
             newspeak_options.append(joy)
+        
         if 'negative' == i:
             newspeak_options.append(negative)
+        
         if 'sadness' == i:
             newspeak_options.append(sadness)
+        
         if 'disgust' == i:
             newspeak_options.append(disgust)
 
@@ -260,7 +265,11 @@ def link_to_newspeak(cleaned_list):
 
 
 def newspeak_integrated_line(frame, words_to_add):
-    """generate line with newspeak words"""
+    """
+    arg: basic frame list and NS vocab list
+    return: integrated line
+    generate line with newspeak words
+    """
 
     newspeak_start = random.choice(words_to_add)
     frame.insert(0, newspeak_start )
@@ -278,32 +287,26 @@ def newspeak_integrated_line(frame, words_to_add):
 
 def printing_cuter_a(long_string):
     """slice line in two for poem effect, this is the first portion"""
+    
     part_a = long_string[:len(long_string)//2]
     return part_a
 
 def printing_cuter_b(long_string):
     """slice line in two for poem effect, this is the second portion"""
+    
     part_b = long_string[len(long_string)//2:]
     return part_b
 
 n_gram_sent2 = generate_sentence()
 book_line = sentence_frame(n_gram_sent2)
 noun_adj_book_line = pull_nouns_and_adjs(n_gram_sent2)
-print("second generated line**********")
-print(n_gram_sent2)
-print(book_line)
-print(noun_adj_book_line)
-print("emotions list:")
 test = link_to_newspeak(tagged_emotions)
-print(test)
-print(random.choice(test))
-print("plese im so tierd")
 godly = newspeak_integrated_line(noun_adj_book_line, test)
-print("LET'S SEEEEEEEEEEE")
+
 print(printing_cuter_a(n_gram_sent))
 print(printing_cuter_b(n_gram_sent))
 print(godly)
 os.system("say " + n_gram_sent)
 os.system("say " + godly)
-print("last one*****")
+
 
