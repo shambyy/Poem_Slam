@@ -191,7 +191,7 @@ def iterate_emotion_tups(newspeak_emotions):
 
 
 # commence poem building
-
+# phase 1
 n_gram_sent = generate_sentence()
 pulled_nouns_and_adjs = pull_nouns_and_adjs(n_gram_sent)
 emotional_words = determine_emotions(pulled_nouns_and_adjs)
@@ -297,12 +297,14 @@ def printing_cuter_b(long_string):
     part_b = long_string[len(long_string)//2:]
     return part_b
 
+# phase 2
 n_gram_sent2 = generate_sentence()
 book_line = sentence_frame(n_gram_sent2)
 noun_adj_book_line = pull_nouns_and_adjs(n_gram_sent2)
 test = link_to_newspeak(tagged_emotions)
 godly = newspeak_integrated_line(noun_adj_book_line, test)
 
+# output time
 print(printing_cuter_a(n_gram_sent))
 print(printing_cuter_b(n_gram_sent))
 print(godly)
