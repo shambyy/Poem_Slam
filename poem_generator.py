@@ -4,13 +4,29 @@ from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nrclex import NRCLex
 import os
-from book_line_gen import *
 
 # same genres as book
-sentences = br.sents(categories='romance') + \
+"""sentences = br.sents(categories='romance') + \
     br.sents(categories='government') + \
     br.sents(categories='fiction') + br.sents(categories='adventure') + \
-    br.sents(categories='science_fiction') + br.sents(categories='lore') 
+    br.sents(categories='science_fiction') + br.sents(categories='lore') """
+
+matching_genres = ['romance', 'government', 'fiction', 'science_fiction', \
+    'lore']
+print(matching_genres)
+category = input("Which of the above genres of "'1984'" interest you? ")
+
+if category == 'romance':
+    sentences = br.sents(categories='romance')
+if category == 'government':
+    sentences = br.sents(categories='government')
+if category == 'fiction':
+    sentences = br.sents(categories='fiction')
+if category == 'science_fiction':
+    sentences = br.sents(categories='science_fiction')
+if category == 'lore':
+    sentences = br.sents(categories='lore')
+
 
 n_grams = {}
 
@@ -26,15 +42,16 @@ for sentence in sentences:
             n_grams[words[i]].append(words[i + 1])
 
         except KeyError as _:
+            # this doesn't always catch them 
             #if first time word is being seen
             n_grams[words[i]] = []
             #append in unseen
             n_grams[words[i]].append(words[i+1])
 
 
-def generate_sentence(nb = 6): # should this be random length
+def generate_sentence(num_words = 26): # should this be random length
     """ 
-    args: nb, number of words that will be generated
+    args: num_words, number of words that will be generated
     return: output_line, list of the n-gram generated words
     """
     words = []
@@ -42,7 +59,7 @@ def generate_sentence(nb = 6): # should this be random length
     next_word = random.choice(list(n_grams.keys()))
     words.append(next_word)
     
-    while len(words) < nb:
+    while len(words) < num_words:
         next_word = random.choice(n_grams[next_word]) #now from list
         words.append(next_word)
 
@@ -146,11 +163,7 @@ def iterate_emotion_tups(newspeak_emotions):
     return cleaned_list
 
 
-# commence onto phase two 
-
-
-
-
+# commence phase two 
 n_gram_sent = generate_sentence()
 #n_gram_sent = "blue and green this our love"
 print("n_gram_sent: ") 
@@ -221,12 +234,30 @@ def link_to_newspeak(cleaned_list):
 
 def newspeak_integrated_line(frame, words_to_add):
     """generate line with newspeak words"""
-    new_speak_selection = random.choice(words_to_add)
-    frame.append(new_speak_selection)
+
+    newspeak_start = random.choice(words_to_add)
+    frame.insert(0, newspeak_start )
+
+    newspeak_mid = random.choice(words_to_add)
+    frame = frame[:len(frame)//2] + [newspeak_mid] + frame[len(frame)//2:]
+
+    newspeak_end = random.choice(words_to_add)
+    frame.append(newspeak_end)
 
     frame = " ".join(frame)
 
     return frame
+
+
+def printing_cuter_a(long_string):
+    """slice line in two for poem effect, this is the first portion"""
+    part_a = long_string[:len(long_string)//2]
+    return part_a
+
+def printing_cuter_b(long_string):
+    """slice line in two for poem effect, this is the second portion"""
+    part_b = long_string[len(long_string)//2:]
+    return part_b
 
 n_gram_sent2 = generate_sentence()
 book_line = sentence_frame(n_gram_sent2)
@@ -241,10 +272,11 @@ print(test)
 print(random.choice(test))
 print("plese im so tierd")
 godly = newspeak_integrated_line(noun_adj_book_line, test)
-print(godly)
-
 print("LET'S SEEEEEEEEEEE")
-print(n_gram_sent)
+print(printing_cuter_a(n_gram_sent))
+print(printing_cuter_b(n_gram_sent))
 print(godly)
 os.system("say " + n_gram_sent)
 os.system("say " + godly)
+print("last one*****")
+
