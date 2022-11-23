@@ -5,11 +5,6 @@ from nltk import pos_tag
 from nrclex import NRCLex
 import os
 
-# same genres as book
-"""sentences = br.sents(categories='romance') + \
-    br.sents(categories='government') + \
-    br.sents(categories='fiction') + br.sents(categories='adventure') + \
-    br.sents(categories='science_fiction') + br.sents(categories='lore') """
 
 matching_genres = ['romance', 'government', 'fiction', 'science_fiction', \
     'lore']
@@ -28,32 +23,37 @@ if category == 'lore':
     sentences = br.sents(categories='lore')
 
 
+# Line generation prep
+
 n_grams = {}
 
 for sentence in sentences:
-    #remove nonn char
+    
+    # remove unwanted characters
     words = [word for word in sentence \
         if (word[0].isalpha() and word[0].lower())]
     
     for i in range(len(words) - 1):
-        #every ending word ignored (bc no list of words after)
-        
+        # con: every ending word ignored (bc no list of words after)
+        # con: exception does not always catch
+
         try:
             n_grams[words[i]].append(words[i + 1])
 
         except KeyError as _:
-            # this doesn't always catch them 
-            #if first time word is being seen
+            #if unseen
             n_grams[words[i]] = []
             #append in unseen
             n_grams[words[i]].append(words[i+1])
 
 
-def generate_sentence(num_words = 26): # should this be random length
+def generate_sentence(num_words = 26): 
     """ 
+    Creates line based off of above prep work
     args: num_words, number of words that will be generated
     return: output_line, list of the n-gram generated words
     """
+
     words = []
 
     next_word = random.choice(list(n_grams.keys()))
@@ -70,9 +70,14 @@ def generate_sentence(num_words = 26): # should this be random length
 
 
 def pull_nouns_and_adjs(output_line):
-    """takes out nouns and adjectives from our sentence"""
+    """
+    Takes out nouns and adjectives from our sentence
+    args: line in full
+    returns: nouns, adjectives, and superlatives aka emotional words
+    """
+
     sentence = output_line
-    
+
     nouns_adjs = [token for token, pos in pos_tag(word_tokenize(sentence)) \
         if ((pos.startswith('N')) or (pos.startswith('J')))]
     
@@ -80,9 +85,14 @@ def pull_nouns_and_adjs(output_line):
 
 
 def sentence_frame(output_line):
-    """takes out frame from our sentence"""
-    sentence = output_line
+    """
+    Takes out frame from our sentence
+    args: line in full
+    return: non-nouns, non-adjectives, and non-superlatives
+    """
     
+    sentence = output_line
+
     frame = [token for token, pos in pos_tag(word_tokenize(sentence)) \
         if not ((pos.startswith('N')) or (pos.startswith('J')))]
     
@@ -90,6 +100,11 @@ def sentence_frame(output_line):
 
 
 def determine_emotions(nouns_adjs):
+    """
+    Finds tagged emotions via line and Lexicon
+    args: list of emotional words
+    return: main emotions associated with emotional words
+    """
     # looks at main emotions associated with adjectives
     
     to_be_converted = []
@@ -103,7 +118,12 @@ def determine_emotions(nouns_adjs):
 
 
 def convert_to_dict(to_be_converted):
+    """
+    Evaluation metric to proceed onto phase 2!
+    arg: tagged emotions list
+    return: dictionary with levels of emotions
     
+    """
     cute_dict = {}
     words = to_be_converted
     i = 0
@@ -124,10 +144,13 @@ def convert_to_dict(to_be_converted):
 
 
 def list_felt_emotions(cute_dict):
+    """
+    Pulls out only emotional words with scores from previous dict
+    arg: dictionary with emotion scoring
+    return: basic emotions found in first emotional line
+    """
     emotions_to_check = list(cute_dict.values())
-
     newspeak_emotions = []
-
 
     for item in emotions_to_check:
 
@@ -137,7 +160,11 @@ def list_felt_emotions(cute_dict):
 
 
 def iterate_emotion_tups(newspeak_emotions):
-    """Return tagged emotions from first line"""
+    """
+    Return tagged emotions from first line (of Lexicon)
+    arg: emotional word list
+    return: list of emotions expressed in emotional line
+    """
 
     listed_tups = []
     
